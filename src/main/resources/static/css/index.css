@@ -1,20 +1,63 @@
+body {
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+    background-color: #f7f7f7;
+}
+
 #gameBoard {
     display: grid;
-    grid-template-columns: repeat(10, 20px); /* 예시로 10x10 격자를 만듭니다 */
-    gap: 1px;
+    grid-template-columns: repeat(10, 40px); /* 10x10 격자의 각 셀은 40x40 크기입니다. */
+    gap: 2px;
+    margin-bottom: 20px;
 }
 
 #gameBoard div {
-    width: 20px;
-    height: 20px;
-    background-color: #eee;
-    border: 1px solid #ddd;
+    width: 40px;
+    height: 40px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    transition: background-color 0.2s ease;
+}
+
+#gameBoard div.alive {
+    background-color: #4caf50; /* 살아있는 셀의 색상 */
 }
 
 #startButton {
-    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: #2196f3;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.3s ease;
+}
+
+#startButton:hover {
+    background-color: #1976d2;
 }
 
 #statusDisplay {
-    margin-top: 5px;
+    margin-top: 10px;
+    color: #333;
+    font-size: 18px;
+}
+
+/* 반응형 디자인: 작은 화면에서 격자 사이즈 조정 */
+@media (max-width: 600px) {
+    #gameBoard {
+        grid-template-columns: repeat(10, 20px);
+    }
+
+    #gameBoard div {
+        width: 20px;
+        height: 20px;
+    }
 }
