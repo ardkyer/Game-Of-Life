@@ -1,0 +1,20 @@
+#gameBoard {
+    display: grid;
+    grid-template-columns: repeat(10, 20px); /* 예시로 10x10 격자를 만듭니다 */
+    gap: 1px;
+}
+
+#gameBoard div {
+    width: 20px;
+    height: 20px;
+    background-color: #eee;
+    border: 1px solid #ddd;
+}
+
+#startButton {
+    margin-top: 10px;
+}
+
+#statusDisplay {
+    margin-top: 5px;
+}
