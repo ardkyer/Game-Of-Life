@@ -21,8 +21,7 @@ function toggleCellState() {
 
 // 게임 시작 함수
 function startGame() {
-    // 게임 시작 로직을 여기에 구현합니다.
-    // 예를 들어, setInterval을 사용하여 각 세대의 상태를 업데이트할 수 있습니다.
+    runGame();
     document.getElementById('statusDisplay').textContent = 'Game Started!';
 }
 
@@ -30,4 +29,5 @@ function startGame() {
 document.addEventListener('DOMContentLoaded', () => {
     initBoard(); // 게임 보드 초기화
     document.getElementById('startButton').addEventListener('click', startGame);
+    // runGame 함수를 여기서 호출하거나, 필요한 로직을 여기에 추가합니다.
 });
