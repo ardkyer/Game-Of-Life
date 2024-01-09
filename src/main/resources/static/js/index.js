@@ -4,6 +4,8 @@ let cellSize; // 셀의 크기는 동적으로 계산될 것입니다.
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const canvasSize = canvas.width; // 캔버스 크기 설정
+const speedControl = document.getElementById('speedControl');
+let speed = 500; // 기본 속도
 
 function createEmptyBoard(size) {
     return Array.from({ length: size }, () => Array(size).fill(0));
@@ -119,19 +121,30 @@ function restartGame() {
     gameRunning = false;
 }
 
+speedControl.addEventListener('input', function() {
+    speed = this.value;
+    if (gameRunning) {
+        clearInterval(gameInterval);
+        runGame();
+    }
+});
+
 function runGame() {
+    if (gameInterval) {
+        clearInterval(gameInterval);
+    }
     gameInterval = setInterval(() => {
+        // 게임 로직 실행
         const previousBoard = currentBoard.map(row => [...row]);
         currentBoard = calculateNextGeneration(currentBoard);
-        drawBoard(currentBoard); // 캔버스에 보드를 그립니다.
+        drawBoard(currentBoard);
         if (isBoardStatic(previousBoard, currentBoard)) {
             clearInterval(gameInterval);
             gameRunning = false;
-            const startButton = document.getElementById('startButton');
-            startButton.textContent = 'Restart';
+            document.getElementById('startButton').textContent = 'Restart';
             document.getElementById('statusDisplay').textContent = 'Game Over!';
         }
-    }, 1000);
+    }, 1000 - speed); // 속도 조절
 }
 
 function isBoardStatic(previousBoard, currentBoard) {
