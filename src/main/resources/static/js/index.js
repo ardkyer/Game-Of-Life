@@ -1,28 +1,52 @@
-// index.js
-// 게임 보드의 크기 설정
+//index.js
 const boardSize = 10; // 10x10 격자
 const cellSize = 40; // 각 셀의 크기는 40px
 
-// 게임 보드 초기화 함수
-function initBoard() {
-    const gameBoard = document.getElementById('gameBoard');
-    gameBoard.innerHTML = ''; // 기존에 있는 셀을 초기화
-    for (let i = 0; i < boardSize * boardSize; i++) {
-        const cell = document.createElement('div');
-        cell.classList.add('cell');
-        cell.addEventListener('click', toggleCellState);
-        gameBoard.appendChild(cell);
-    }
+function createEmptyBoard(size) {
+    return Array.from({ length: size }, () => Array(size).fill(0));
 }
 
-// 셀 상태 토글 함수
-function toggleCellState() {
-    this.classList.toggle('alive'); // 'alive' 클래스 토글
+function createRandomBoard(size) {
+    const board = [];
+    for (let i = 0; i < size; i++) {
+        board[i] = [];
+        for (let j = 0; j < size; j++) {
+            board[i][j] = Math.floor(Math.random() * 2);
+        }
+    }
+    return board;
 }
 
 let currentBoard = createRandomBoard(boardSize); // 현재 게임 보드 상태
 let gameRunning = false;
 let gameInterval;
+
+function initBoard(board) {
+    const gameBoard = document.getElementById('gameBoard');
+    gameBoard.innerHTML = ''; // 기존에 있는 셀을 초기화
+    for (let i = 0; i < boardSize; i++) {
+        for (let j = 0; j < boardSize; j++) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            cell.style.width = `${cellSize}px`;
+            cell.style.height = `${cellSize}px`;
+            cell.setAttribute('data-index', i * boardSize + j);
+            cell.addEventListener('click', toggleCellState);
+            if (board[i][j] === 1) {
+                cell.classList.add('alive');
+            }
+            gameBoard.appendChild(cell);
+        }
+    }
+}
+
+function toggleCellState() {
+    const cellIndex = parseInt(this.getAttribute('data-index'));
+    const x = Math.floor(cellIndex / boardSize);
+    const y = cellIndex % boardSize;
+    this.classList.toggle('alive');
+    currentBoard[x][y] = this.classList.contains('alive') ? 1 : 0;
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     initBoard(currentBoard); // 게임 보드 초기화
@@ -64,8 +88,9 @@ function pauseGame() {
 function restartGame() {
     clearInterval(gameInterval);
     currentBoard = createRandomBoard(boardSize);
-    initBoard(currentBoard); // Reinitialize the board with the new state
-    document.getElementById('statusDisplay').textContent = '';
+    initBoard(currentBoard);
+    document.getElementById('statusDisplay').textContent = 'Game Restarted!';
+    gameRunning = false;
 }
 
 function runGame() {

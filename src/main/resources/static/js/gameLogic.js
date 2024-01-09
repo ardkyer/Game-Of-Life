@@ -1,3 +1,4 @@
+//gameLogic.js
 function calculateNextGeneration(board) {
     const nextBoard = board.map(arr => [...arr]);
     const size = board.length;
@@ -91,4 +92,3 @@ function generateDataset(size, generations, samples) {
 function flattenBoard(board) {
     return board.flat();
 }
-
