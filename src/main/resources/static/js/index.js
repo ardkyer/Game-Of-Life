@@ -1,6 +1,6 @@
 //index.js
-const boardSize = 10; // 10x10 격자
-const cellSize = 40; // 각 셀의 크기는 40px
+let boardSize = 10; // 기본 10x10 보드
+let cellSize = 40; // 각 셀의 크기는 40px
 
 function createEmptyBoard(size) {
     return Array.from({ length: size }, () => Array(size).fill(0));
@@ -23,18 +23,18 @@ let gameInterval;
 
 function initBoard(board) {
     const gameBoard = document.getElementById('gameBoard');
-    gameBoard.innerHTML = ''; // 기존에 있는 셀을 초기화
+    // 업데이트된 보드 크기에 맞게 grid-template-columns 스타일을 설정합니다.
+    gameBoard.style.gridTemplateColumns = `repeat(${boardSize}, 40px)`;
+    gameBoard.innerHTML = ''; // 기존에 있는 셀을 초기화합니다.
+
     for (let i = 0; i < boardSize; i++) {
         for (let j = 0; j < boardSize; j++) {
             const cell = document.createElement('div');
             cell.classList.add('cell');
-            cell.style.width = `${cellSize}px`;
-            cell.style.height = `${cellSize}px`;
+            cell.style.width = '40px'; // 셀의 가로 크기를 고정합니다.
+            cell.style.height = '40px'; // 셀의 세로 크기를 고정합니다.
             cell.setAttribute('data-index', i * boardSize + j);
             cell.addEventListener('click', toggleCellState);
-            if (board[i][j] === 1) {
-                cell.classList.add('alive');
-            }
             gameBoard.appendChild(cell);
         }
     }
@@ -49,7 +49,7 @@ function toggleCellState() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    initBoard(currentBoard); // 게임 보드 초기화
+    initBoard(createEmptyBoard(boardSize)); // 빈 게임 보드로 초기화
 
     const startButton = document.getElementById('startButton');
     startButton.addEventListener('click', () => {
@@ -67,7 +67,31 @@ document.addEventListener('DOMContentLoaded', () => {
             startButton.textContent = 'Start Game';
         }
     });
+
+    // 보드 크기 적용 버튼 이벤트 리스너
+    document.getElementById('applyBoardSize').addEventListener('click', applyNewBoardSize);
 });
+
+function applyNewBoardSize() {
+    const newSize = parseInt(document.getElementById('boardSizeInput').value);
+    if (newSize >= 1 && newSize <= 1000) {
+        boardSize = newSize; // 새로운 보드 크기 적용
+        currentBoard = createEmptyBoard(boardSize); // 새 빈 보드 생성
+        initBoard(currentBoard); // 보드 초기화
+    } else {
+        alert('Board size must be between 1 and 1000.');
+    }
+}
+
+function calculateCellSize(boardSize) {
+    // 게임 보드의 최대 크기를 고려하여 셀 크기를 계산합니다.
+    const gameBoardContainer = document.getElementById('gameBoard');
+    const gameBoardMaxWidth = gameBoardContainer.clientWidth; // 게임 보드 컨테이너의 너비
+    if (boardSize * cellSize > gameBoardMaxWidth) {
+        return gameBoardMaxWidth / boardSize; // 너비에 맞춰 셀 크기 조정
+    }
+    return cellSize; // 기본 셀 크기 사용
+}
 
 function startGame() {
     if (!gameRunning) {

@@ -11,7 +11,7 @@ body {
 
 #gameBoard {
     display: grid;
-    grid-template-columns: repeat(10, 40px); /* 10x10 격자의 각 셀은 40x40 크기입니다. */
+    grid-template-columns: repeat(10, 40px); /* 이 부분을 자바스크립트에서 동적으로 변경해야 합니다. */
     gap: 2px;
     margin-bottom: 20px;
 }

@@ -35,7 +35,7 @@ function runGame() {
     setInterval(updateAndRender, 1000); // 매 1초마다 세대를 업데이트합니다.
 }
 
-// 게임 보드를 DOM에 렌더링하는 함수
+// 게임 보드를 렌더링하는 함수
 function renderBoard(board) {
     const cells = document.querySelectorAll('.cell');
     board.flat().forEach((cellState, index) => {
