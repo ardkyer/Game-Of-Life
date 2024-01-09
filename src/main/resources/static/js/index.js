@@ -6,6 +6,7 @@ const ctx = canvas.getContext('2d');
 const canvasSize = canvas.width; // 캔버스 크기 설정
 const speedControl = document.getElementById('speedControl');
 let speed = 500; // 기본 속도
+let generationCount = 0; // 세대 카운터 초기화
 
 function createEmptyBoard(size) {
     return Array.from({ length: size }, () => Array(size).fill(0));
@@ -46,6 +47,7 @@ function calculateCellSize() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    updateGenerationDisplay();
     calculateCellSize();
     drawBoard(createEmptyBoard(boardSize)); // 캔버스에 빈 게임 보드를 그립니다.
 
@@ -129,12 +131,20 @@ speedControl.addEventListener('input', function() {
     }
 });
 
+function updateGenerationDisplay() {
+    const generationDisplay = document.getElementById('generationDisplay');
+    generationDisplay.textContent = `Generation: ${generationCount}`;
+}
+
 function runGame() {
     if (gameInterval) {
         clearInterval(gameInterval);
     }
     gameInterval = setInterval(() => {
-        // 게임 로직 실행
+        generationCount++; // 세대 카운터 증가
+        updateGenerationDisplay(); // 세대 카운터 업데이트
+
+        // 기존 게임 로직
         const previousBoard = currentBoard.map(row => [...row]);
         currentBoard = calculateNextGeneration(currentBoard);
         drawBoard(currentBoard);
@@ -145,6 +155,16 @@ function runGame() {
             document.getElementById('statusDisplay').textContent = 'Game Over!';
         }
     }, 1000 - speed); // 속도 조절
+}
+
+function restartGame() {
+    clearInterval(gameInterval);
+    generationCount = 0; // 세대 카운터 리셋
+    updateGenerationDisplay(); // 세대 카운터 업데이트
+    currentBoard = createRandomBoard(boardSize);
+    drawBoard(currentBoard);
+    document.getElementById('statusDisplay').textContent = 'Game Restarted!';
+    gameRunning = false;
 }
 
 function isBoardStatic(previousBoard, currentBoard) {
