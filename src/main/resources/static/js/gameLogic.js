@@ -5,7 +5,7 @@ function calculateNextGeneration(board) {
 
     for (let x = 0; x < size; x++) {
         for (let y = 0; y < size; y++) {
-            const aliveNeighbors = getAliveNeighbors(board, x, y, size);
+            const aliveNeighbors = getAliveNeighbors(board, x, y);
 
             if (board[x][y] === 1) {
                 if (aliveNeighbors < 2 || aliveNeighbors > 3) {
@@ -44,7 +44,8 @@ function renderBoard(board) {
 }
 
 
-function getAliveNeighbors(board, x, y, size) {
+function getAliveNeighbors(board, x, y) {
+    const size = board.length;
     let count = 0;
     for (let i = -1; i <= 1; i++) {
         for (let j = -1; j <= 1; j++) {
@@ -64,7 +65,7 @@ function createRandomBoard(size) {
     for (let i = 0; i < size; i++) {
         board[i] = [];
         for (let j = 0; j < size; j++) {
-            board[i][j] = Math.round(Math.random());
+            board[i][j] = Math.random() < 0.5 ? 1 : 0;
         }
     }
     return board;

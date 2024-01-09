@@ -1,6 +1,9 @@
 //index.js
 let boardSize = 10; // 기본 10x10 보드
-let cellSize = 40; // 각 셀의 크기는 40px
+let cellSize; // 셀의 크기는 동적으로 계산될 것입니다.
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const canvasSize = canvas.width; // 캔버스 크기 설정
 
 function createEmptyBoard(size) {
     return Array.from({ length: size }, () => Array(size).fill(0));
@@ -21,35 +24,28 @@ let currentBoard = createRandomBoard(boardSize); // 현재 게임 보드 상태
 let gameRunning = false;
 let gameInterval;
 
-function initBoard(board) {
-    const gameBoard = document.getElementById('gameBoard');
-    // 업데이트된 보드 크기에 맞게 grid-template-columns 스타일을 설정합니다.
-    gameBoard.style.gridTemplateColumns = `repeat(${boardSize}, 40px)`;
-    gameBoard.innerHTML = ''; // 기존에 있는 셀을 초기화합니다.
+// 캔버스에 보드를 그리는 함수
+function drawBoard(board) {
+    // Clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // Draw the cells
     for (let i = 0; i < boardSize; i++) {
         for (let j = 0; j < boardSize; j++) {
-            const cell = document.createElement('div');
-            cell.classList.add('cell');
-            cell.style.width = '40px'; // 셀의 가로 크기를 고정합니다.
-            cell.style.height = '40px'; // 셀의 세로 크기를 고정합니다.
-            cell.setAttribute('data-index', i * boardSize + j);
-            cell.addEventListener('click', toggleCellState);
-            gameBoard.appendChild(cell);
+            ctx.fillStyle = board[i][j] ? '#4caf50' : '#ffffff';
+            ctx.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
         }
     }
 }
 
-function toggleCellState() {
-    const cellIndex = parseInt(this.getAttribute('data-index'));
-    const x = Math.floor(cellIndex / boardSize);
-    const y = cellIndex % boardSize;
-    this.classList.toggle('alive');
-    currentBoard[x][y] = this.classList.contains('alive') ? 1 : 0;
+// 셀의 크기를 계산하는 함수
+function calculateCellSize() {
+    cellSize = canvasSize / boardSize;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    initBoard(createEmptyBoard(boardSize)); // 빈 게임 보드로 초기화
+    calculateCellSize();
+    drawBoard(createEmptyBoard(boardSize)); // 캔버스에 빈 게임 보드를 그립니다.
 
     const startButton = document.getElementById('startButton');
     startButton.addEventListener('click', () => {
@@ -72,25 +68,31 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('applyBoardSize').addEventListener('click', applyNewBoardSize);
 });
 
+canvas.addEventListener('click', function(event) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    const canvasLeft = (event.clientX - rect.left) * scaleX;
+    const canvasTop = (event.clientY - rect.top) * scaleY;
+
+    const x = Math.floor(canvasLeft / cellSize);
+    const y = Math.floor(canvasTop / cellSize);
+
+    currentBoard[y][x] = currentBoard[y][x] ? 0 : 1; // Toggle the cell state
+    drawBoard(currentBoard); // Redraw the board
+});
+
 function applyNewBoardSize() {
     const newSize = parseInt(document.getElementById('boardSizeInput').value);
     if (newSize >= 1 && newSize <= 1000) {
-        boardSize = newSize; // 새로운 보드 크기 적용
-        currentBoard = createEmptyBoard(boardSize); // 새 빈 보드 생성
-        initBoard(currentBoard); // 보드 초기화
+        boardSize = newSize;
+        calculateCellSize();
+        currentBoard = createEmptyBoard(boardSize);
+        drawBoard(currentBoard);
     } else {
         alert('Board size must be between 1 and 1000.');
     }
-}
-
-function calculateCellSize(boardSize) {
-    // 게임 보드의 최대 크기를 고려하여 셀 크기를 계산합니다.
-    const gameBoardContainer = document.getElementById('gameBoard');
-    const gameBoardMaxWidth = gameBoardContainer.clientWidth; // 게임 보드 컨테이너의 너비
-    if (boardSize * cellSize > gameBoardMaxWidth) {
-        return gameBoardMaxWidth / boardSize; // 너비에 맞춰 셀 크기 조정
-    }
-    return cellSize; // 기본 셀 크기 사용
 }
 
 function startGame() {
@@ -112,7 +114,7 @@ function pauseGame() {
 function restartGame() {
     clearInterval(gameInterval);
     currentBoard = createRandomBoard(boardSize);
-    initBoard(currentBoard);
+    drawBoard(currentBoard); // 캔버스에 보드를 다시 그립니다.
     document.getElementById('statusDisplay').textContent = 'Game Restarted!';
     gameRunning = false;
 }
@@ -121,7 +123,7 @@ function runGame() {
     gameInterval = setInterval(() => {
         const previousBoard = currentBoard.map(row => [...row]);
         currentBoard = calculateNextGeneration(currentBoard);
-        renderBoard(currentBoard);
+        drawBoard(currentBoard); // 캔버스에 보드를 그립니다.
         if (isBoardStatic(previousBoard, currentBoard)) {
             clearInterval(gameInterval);
             gameRunning = false;
@@ -139,3 +141,5 @@ function isBoardStatic(previousBoard, currentBoard) {
         });
     });
 }
+
+// 여기에 calculateNextGeneration 및 관련 게임 로직 함수를 추가합니다.
