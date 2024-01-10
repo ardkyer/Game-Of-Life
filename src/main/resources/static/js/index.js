@@ -8,6 +8,7 @@ const speedControl = document.getElementById('speedControl');
 let speed = 500; // 기본 속도
 let generationCount = 0; // 세대 카운터 초기화
 let recentGenerations = [];
+let isOscillating = false;
 
 function createEmptyBoard(size) {
     return Array.from({ length: size }, () => Array(size).fill(0));
@@ -116,14 +117,6 @@ function pauseGame() {
     }
 }
 
-function restartGame() {
-    clearInterval(gameInterval);
-    currentBoard = createRandomBoard(boardSize);
-    drawBoard(currentBoard); // 캔버스에 보드를 다시 그립니다.
-    document.getElementById('statusDisplay').textContent = 'Game Restarted!';
-    gameRunning = false;
-}
-
 speedControl.addEventListener('input', function() {
     speed = this.value;
     if (gameRunning) {
@@ -141,21 +134,25 @@ function runGame() {
     if (gameInterval) {
         clearInterval(gameInterval);
     }
+    gameRunning = true;
     gameInterval = setInterval(() => {
-        generationCount++; // 세대 카운터 증가
-        updateGenerationDisplay(); // 세대 카운터 업데이트
-
-        // 기존 게임 로직
-        const previousBoard = currentBoard.map(row => [...row]);
+        generationCount++;
+        updateGenerationDisplay();
+        const previousBoardString = boardToString(currentBoard);
         currentBoard = calculateNextGeneration(currentBoard);
         drawBoard(currentBoard);
         if (isBoardStaticOrOscillating(currentBoard)) {
-            clearInterval(gameInterval);
-            gameRunning = false;
-            document.getElementById('startButton').textContent = 'Restart';
-            document.getElementById('statusDisplay').textContent = 'Game Over!';
+            if (isOscillating) {
+                document.getElementById('statusDisplay').textContent = 'Game Over!';
+                document.getElementById('startButton').textContent = 'Restart';
+            } else {
+                clearInterval(gameInterval);
+                gameRunning = false;
+                document.getElementById('statusDisplay').textContent = 'Game Over!';
+                document.getElementById('startButton').textContent = 'Restart';
+            }
         }
-    }, 1000 - speed); // 속도 조절
+    }, 1000 - speed);
 }
 
 function restartGame() {
@@ -169,23 +166,21 @@ function restartGame() {
 }
 
 function isBoardStaticOrOscillating(currentBoard) {
-    // 현재 보드를 문자열로 변환
     const currentBoardString = boardToString(currentBoard);
-
-    // 최근 세대들 중에 현재 세대와 동일한 보드가 있는지 확인
     if (recentGenerations.includes(currentBoardString)) {
-        // 진동자나 정물을 찾음
-        return true;
+        // 현재 보드가 이전에 존재했던 보드와 동일하면 진동자 상태로 간주
+        isOscillating = true;
+        return true; // 게임 오버 상태를 표시하지만, 게임은 계속 진행
+    } else {
+        // 현재 보드가 최근 세대들과 다르면 배열에 추가
+        recentGenerations.push(currentBoardString);
+        // 배열이 너무 길어지지 않도록 최대 크기를 제한
+        if (recentGenerations.length > 10) { // 10은 임의로 정한 숫자로, 진동자의 최대 주기를 고려해서 조정 가능
+            recentGenerations.shift();
+        }
+        isOscillating = false;
     }
-
-    // 현재 보드를 최근 세대 배열에 추가
-    recentGenerations.push(currentBoardString);
-
-    // 배열이 너무 길어지지 않도록 최대 크기를 제한 (예: 진동자의 최대 주기로 설정)
-    if (recentGenerations.length > 10) {
-        recentGenerations.shift();
-    }
-
+    // 이전 세대와 동일한지 검사하는 대신 최근 세대들의 패턴만을 확인
     return false;
 }
 
