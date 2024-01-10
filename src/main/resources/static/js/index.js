@@ -184,6 +184,37 @@ function isBoardStaticOrOscillating(currentBoard) {
     return false;
 }
 
+function placePattern(patternName) {
+    const pattern = patterns[patternName];
+    const offsetRow = Math.floor((boardSize - pattern.length) / 2);
+    const offsetCol = Math.floor((boardSize - pattern[0].length) / 2);
+
+    for (let i = 0; i < pattern.length; i++) {
+        for (let j = 0; j < pattern[i].length; j++) {
+            currentBoard[offsetRow + i][offsetCol + j] = pattern[i][j];
+        }
+    }
+
+    drawBoard(currentBoard);
+}
+
+function clearBoard() {
+    currentBoard = createEmptyBoard(boardSize);
+    generationCount = 0;
+    updateGenerationDisplay();
+    drawBoard(currentBoard);
+}
+
+document.getElementById('placePatternButton').addEventListener('click', () => {
+    const selectedPattern = document.getElementById('patternSelector').value;
+    if (gameRunning) {
+        pauseGame();
+    }
+    clearBoard();
+    placePattern(selectedPattern);
+    // 게임을 재시작하려면 startGame()을 호출할 수 있습니다.
+});
+
 function boardToString(board) {
     return board.map(row => row.join('')).join('\n');
 }

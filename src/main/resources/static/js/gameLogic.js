@@ -47,14 +47,17 @@ function renderBoard(board) {
 function getAliveNeighbors(board, x, y) {
     const size = board.length;
     let count = 0;
+
+    // 주변 8개의 셀을 확인합니다.
     for (let i = -1; i <= 1; i++) {
         for (let j = -1; j <= 1; j++) {
-            if (i === 0 && j === 0) continue;
-            const newX = x + i;
-            const newY = y + j;
-            if (newX >= 0 && newX < size && newY >= 0 && newY < size) {
-                count += board[newX][newY];
-            }
+            if (i === 0 && j === 0) continue; // 자기 자신은 제외합니다.
+
+            // 토러스 형태의 보드를 위해 모듈러 연산을 사용합니다.
+            const newX = (x + i + size) % size;
+            const newY = (y + j + size) % size;
+
+            count += board[newX][newY];
         }
     }
     return count;

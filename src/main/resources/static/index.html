@@ -17,6 +17,14 @@
 <label for="speedControl">Speed Control:</label>
 <input type="range" id="speedControl" min="1" max="1000" value="500">
 <div id="generationDisplay">Generation: 0</div>
+<label for="patternSelector">Choose a pattern:</label>
+<select id="patternSelector">
+    <option value="glider">Glider</option>
+    <option value="spaceship">Spaceship</option>
+    <option value="oscillator">Oscillator</option>
+</select>
+<button id="placePatternButton">Place Pattern</button>
+<script src="js/patterns.js"></script>
 <script src="js/gameLogic.js"></script>
 <script src="js/index.js"></script>
 </body>
