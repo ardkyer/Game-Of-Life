@@ -7,6 +7,7 @@ const canvasSize = canvas.width; // 캔버스 크기 설정
 const speedControl = document.getElementById('speedControl');
 let speed = 500; // 기본 속도
 let generationCount = 0; // 세대 카운터 초기화
+let recentGenerations = [];
 
 function createEmptyBoard(size) {
     return Array.from({ length: size }, () => Array(size).fill(0));
@@ -148,7 +149,7 @@ function runGame() {
         const previousBoard = currentBoard.map(row => [...row]);
         currentBoard = calculateNextGeneration(currentBoard);
         drawBoard(currentBoard);
-        if (isBoardStatic(previousBoard, currentBoard)) {
+        if (isBoardStaticOrOscillating(currentBoard)) {
             clearInterval(gameInterval);
             gameRunning = false;
             document.getElementById('startButton').textContent = 'Restart';
@@ -167,12 +168,29 @@ function restartGame() {
     gameRunning = false;
 }
 
-function isBoardStatic(previousBoard, currentBoard) {
-    return previousBoard.every((row, rowIndex) => {
-        return row.every((cell, cellIndex) => {
-            return cell === currentBoard[rowIndex][cellIndex];
-        });
-    });
+function isBoardStaticOrOscillating(currentBoard) {
+    // 현재 보드를 문자열로 변환
+    const currentBoardString = boardToString(currentBoard);
+
+    // 최근 세대들 중에 현재 세대와 동일한 보드가 있는지 확인
+    if (recentGenerations.includes(currentBoardString)) {
+        // 진동자나 정물을 찾음
+        return true;
+    }
+
+    // 현재 보드를 최근 세대 배열에 추가
+    recentGenerations.push(currentBoardString);
+
+    // 배열이 너무 길어지지 않도록 최대 크기를 제한 (예: 진동자의 최대 주기로 설정)
+    if (recentGenerations.length > 10) {
+        recentGenerations.shift();
+    }
+
+    return false;
+}
+
+function boardToString(board) {
+    return board.map(row => row.join('')).join('\n');
 }
 
 // 여기에 calculateNextGeneration 및 관련 게임 로직 함수를 추가합니다.
