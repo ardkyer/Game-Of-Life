@@ -136,24 +136,29 @@ function runGame() {
     }
     gameRunning = true;
     gameInterval = setInterval(() => {
-        generationCount++;
-        updateGenerationDisplay();
-        const previousBoardString = boardToString(currentBoard);
-        currentBoard = calculateNextGeneration(currentBoard);
-        drawBoard(currentBoard);
         if (isBoardStaticOrOscillating(currentBoard)) {
             if (isOscillating) {
                 document.getElementById('statusDisplay').textContent = 'Game Over!';
                 document.getElementById('startButton').textContent = 'Restart';
+                clearInterval(gameInterval); // 게임 인터벌 중단
+                gameRunning = false; // 게임 실행 상태를 false로 설정
             } else {
                 clearInterval(gameInterval);
                 gameRunning = false;
                 document.getElementById('statusDisplay').textContent = 'Game Over!';
                 document.getElementById('startButton').textContent = 'Restart';
             }
+            return; // 게임 오버 상태에서는 더 이상의 세대 카운팅을 중단합니다.
         }
+
+        // 게임 오버가 아닌 경우에만 세대 카운트 증가
+        generationCount++;
+        updateGenerationDisplay();
+        currentBoard = calculateNextGeneration(currentBoard);
+        drawBoard(currentBoard);
     }, 1000 - speed);
 }
+
 
 function restartGame() {
     clearInterval(gameInterval);
