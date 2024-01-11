@@ -130,6 +130,16 @@ function updateGenerationDisplay() {
     generationDisplay.textContent = `Generation: ${generationCount}`;
 }
 
+function countAliveCells(board) {
+    return board.flat().reduce((acc, cell) => acc + cell, 0);
+}
+
+function updateStatistics() {
+    const aliveCellsCount = countAliveCells(currentBoard);
+    document.getElementById('aliveCellsCount').textContent = `${aliveCellsCount}`;
+}
+
+
 function runGame() {
     if (gameInterval) {
         clearInterval(gameInterval);
@@ -141,7 +151,7 @@ function runGame() {
                 document.getElementById('statusDisplay').textContent = 'Game Over!';
                 document.getElementById('startButton').textContent = 'Restart';
                 clearInterval(gameInterval); // 게임 인터벌 중단
-                gameRunning = false; // 게임 실행 상태를 false로 설정
+                gameRunning = false;
             } else {
                 clearInterval(gameInterval);
                 gameRunning = false;
@@ -156,6 +166,7 @@ function runGame() {
         updateGenerationDisplay();
         currentBoard = calculateNextGeneration(currentBoard);
         drawBoard(currentBoard);
+        updateStatistics(); // 살아있는 셀의 수 업데이트
     }, 1000 - speed);
 }
 
