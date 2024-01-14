@@ -62,8 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
             pauseGame();
             startButton.textContent = 'Resume';
         } else if (startButton.textContent === 'Resume') {
-            startGame();
-            startButton.textContent = 'Pause';
+            if (!gameRunning) {
+                startGame(); // 게임을 재개합니다.
+                startButton.textContent = 'Pause';
+            }
         } else if (startButton.textContent === 'Restart') {
             restartGame();
             startButton.textContent = 'Start Game';
@@ -231,8 +233,63 @@ document.getElementById('placePatternButton').addEventListener('click', () => {
     // 게임을 재시작하려면 startGame()을 호출할 수 있습니다.
 });
 
+document.getElementById('savePatternButton').addEventListener('click', () => {
+    const currentPattern = boardToString(currentBoard);
+    localStorage.setItem('savedPattern', currentPattern);
+    alert('Pattern saved!');
+});
+
+document.getElementById('loadPatternButton').addEventListener('click', () => {
+    const savedPattern = localStorage.getItem('savedPattern');
+    if (savedPattern) {
+        currentBoard = stringToBoard(savedPattern);
+        drawBoard(currentBoard);
+        if (gameRunning) {
+            clearInterval(gameInterval);
+        }
+        gameRunning = false; // 게임 상태 업데이트
+        document.getElementById('startButton').textContent = 'Start Game'; // 버튼 텍스트 변경
+        recentGenerations = []; // 여기에 recentGenerations 초기화 추가
+    } else {
+        alert('No saved pattern found!');
+    }
+});
+
+
 function boardToString(board) {
     return board.map(row => row.join('')).join('\n');
 }
+
+function stringToBoard(str) {
+    const rows = str.split('\n');
+    const patternBoard = rows.map(row => row.split('').map(cell => parseInt(cell)));
+
+    // 저장된 패턴과 현재 보드 크기 비교
+    const patternRows = patternBoard.length;
+    const patternCols = patternBoard[0].length;
+    const startRow = Math.floor((boardSize - patternRows) / 2);
+    const startCol = Math.floor((boardSize - patternCols) / 2);
+
+    // 새로운 빈 보드 생성
+    const newBoard = createEmptyBoard(boardSize);
+
+    // 패턴을 새 보드에 적용
+    for (let i = 0; i < boardSize; i++) {
+        for (let j = 0; j < boardSize; j++) {
+            // 패턴의 해당 부분이 존재하는 경우에만 적용
+            const patternRow = i - startRow;
+            const patternCol = j - startCol;
+            if (patternRow >= 0 && patternRow < patternRows &&
+                patternCol >= 0 && patternCol < patternCols) {
+                newBoard[i][j] = patternBoard[patternRow][patternCol];
+            }
+        }
+    }
+
+    return newBoard;
+}
+
+
+
 
 // 여기에 calculateNextGeneration 및 관련 게임 로직 함수를 추가합니다.
