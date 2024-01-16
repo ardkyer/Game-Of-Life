@@ -1,4 +1,4 @@
-# Life-Of-Game
+# Game of Life
 Making the Game Of Life
 
 ![프로젝트 데모](src/main/resources/static/images/demo.gif)
