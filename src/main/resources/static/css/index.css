@@ -45,11 +45,15 @@ body {
     background-color: #1976d2;
 }
 
+.game-board-container {
+    position: relative; /* This makes it a reference for absolutely positioned children */
+}
+
 #boardSizeControls {
     position: absolute; /* 요소를 문서의 흐름에서 제거하고 위치를 지정합니다. */
-    top: 20px; /* 상단에서 20px 떨어진 위치에 배치합니다. */
+    top: 5vw; /* 상단에서 4vw 떨어진 위치에 배치합니다. */
     left: 20px; /* 왼쪽에서 20px 떨어진 위치에 배치합니다. */
-    background: #ffffff; /* 배경색 지정 */
+    background: rgba(255, 255, 255, 0.3); /* 배경색 지정 */
     padding: 10px; /* 패딩 지정 */
     border-radius: 5px; /* 테두리 반경 지정 */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 그림자 효과 추가 */
