@@ -18,12 +18,13 @@
 
 <div class="controls-container">
     <button id="startButton">Start Game</button>
-    <div id="statusDisplay"></div> <!-- This is where the game's status will appear -->
+    <div id="statusDisplay"></div>
+
     <div class="speed-control-container">
         <label for="speedControl">Speed Control:</label>
         <input type="range" id="speedControl" min="1" max="1000" value="500">
     </div>
-    <div id="generationDisplay">Generation: 0</div>
+
     <label for="patternSelector">Choose a pattern:</label>
     <select id="patternSelector">
         <option value="glider">Glider</option>
@@ -32,7 +33,8 @@
     </select>
     <button id="placePatternButton">Place Pattern</button>
     <div id="stats">
-        <p>살아있는 셀의 수: <span id="aliveCellsCount"></span></p>
+        <div id="generationDisplay">Generation: 0</div>
+        <div id="aliveCells">Number of living cells: <span id="aliveCellsCount"></span></div>
     </div>
     <button id="savePatternButton">Save Pattern</button>
     <button id="loadPatternButton">Load Pattern</button>
