@@ -60,32 +60,34 @@ body {
     margin-right: 5px; /* 요소 사이의 오른쪽 여백 지정 */
 }
 
-/* 나머지 요소들을 중앙에 배치하기 위해 body의 스타일을 조정합니다. */
-body {
+.controls-container {
     display: flex;
-    justify-content: center;
-    align-items: flex-start; /* 상단 정렬로 변경 */
     flex-direction: column;
-    height: 100vh;
-    margin: 0;
-    background-color: #f7f7f7;
-    padding-top: 50px; /* 상단에 여백을 추가하여 중앙에 위치한 요소들이 상단에 있는 요소와 겹치지 않도록 합니다. */
+    align-items: center; /* Center align all child elements */
+    margin-left: 20px; /* Space between the game board and the right sidebar */
 }
 
-#statusDisplay {
-    margin-top: 10px;
-    color: #333;
-    font-size: 18px;
+.speed-control-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center align the speed control label and input */
+    width: 100%; /* Ensure the container takes up the full width */
 }
 
-/* 반응형 디자인: 작은 화면에서 격자 사이즈 조정 */
-@media (max-width: 600px) {
-    #gameBoard {
-        grid-template-columns: repeat(10, 20px);
-    }
+#startButton,
+#generationDisplay,
+#patternSelector,
+#placePatternButton,
+#stats,
+#savePatternButton,
+#loadPatternButton {
+    text-align: center; /* Center align text for all these elements */
+    width: 100%; /* Ensure each control takes up the full width */
+    /* Add some space between each control */
+    margin: auto auto 20px;
+}
 
-    #gameBoard div {
-        width: 20px;
-        height: 20px;
-    }
+/* Make sure the range input (speed control slider) is also centered */
+#speedControl {
+    align-self: center; /* This will center the slider */
 }
